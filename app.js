@@ -6,7 +6,18 @@ const app=express();
 const port =5500;
 app.use(express.urlencoded({extended:true}))
 app.use(express.json())
-app.use(cors());
+const allowedOrigins = ['https://timely-mousse-f33637.netlify.app/', 'http://localhost:3000/','https://deemsystask.onrender.com/']; // Add the URLs you want to allow
+const corsOptions = {
+  origin: (origin, callback) => {
+    // Check if the requested origin is in the list of allowed origins
+    if (allowedOrigins.includes(origin) || !origin) {
+      callback(null, true); // Allow the request
+    } else {
+      callback(new Error('Not allowed by CORS')); // Deny the request
+    }
+  },
+};
+app.use(cors(corsOptions));
 // Route to get all products
 app.get('/products',(req,res)=>{
     dbo().then(async(db)=>{
